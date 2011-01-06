@@ -6,6 +6,11 @@
 sudo su - root
 }}}
 
+===Enable cron for the Mummra service account==
+{{{
+echo svc_mummra_app >> /etc/cron.allow
+}}}
+
 ===Install some dependencies===
 {{{
 yum -y install vim-enhanced ruby httpd httpd-devel \
@@ -13,6 +18,7 @@ gcc gcc-c++ readline readline-devel zlib zlib-devel \
 openssl openssl-devel gettext-devel expat-devel \
 curl-devel mysql-devel subversion
 }}}
+
 
 ===Download, compile, and install Ruby 1.8.7; Install rubygems===
 {{{
