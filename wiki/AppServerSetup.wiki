@@ -43,6 +43,7 @@ PassengerRuby /usr/local/bin/ruby
 EOF
 }}}
 
+Note: Update RailsEnv to the appropriate environment for the server you're building
 {{{
 export IP_ADDRESS=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
 
