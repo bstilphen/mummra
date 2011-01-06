@@ -88,6 +88,7 @@ service httpd restart
 {{{
 su - svc_mummra_app
 svn --no-auth-cache co http://svn.apollogrp.edu/mummra/trunk ./mummra
+cp ~/mummra/bin/dot_bash_profile.sh ~/.bash_profile
 }}}
 
 ===Create log directories===
