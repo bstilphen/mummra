@@ -1,5 +1,11 @@
 =Mummra App Server Setup=
 
+===Do all of this a the ROOT user===
+
+{{{
+sudo su - root
+}}}
+
 ===Install some dependencies===
 {{{
 yum -y install vim-enhanced ruby httpd httpd-devel \
