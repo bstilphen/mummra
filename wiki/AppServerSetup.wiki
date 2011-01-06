@@ -58,18 +58,18 @@ cat << EOF > /etc/httpd/conf.d/mummra.conf
 EOF
 }}}
 
-===Setup mummra app dir and install gem deps===
+===Setup mummra app dir; install rails and other gem deps===
 {{{
 mkdir -p /opt/www
 cd /opt/www
 svn --no-auth-cache co http://svn.apollogrp.edu/mummra/trunk/www/mummra ./mummra
+gem install -v=2.3.8 rails --no-rdoc --no-ri
 cd /opt/www/mummra && rake gems:install
 chown svc_mummra_app:unix_ServiceAccounts /opt/www/mummra/ -R
 }}}
 
 ===Install a few gems that rake gems:install misses===
 {{{
-gem install -v=2.3.8 rails --no-rdoc --no-ri
 gem install mysql ruby-ldap --no-rdoc --no-ri
 }}}
 
