@@ -88,6 +88,7 @@ service httpd restart
 {{{
 su - svc_mummra_app
 svn --no-auth-cache co http://svn.apollogrp.edu/mummra/trunk ./mummra
+mkdir -p ~/logs/{add_machines_to_helios,certify_machines,certify_requests,cron,provision}
 }}}
 
 ===Setup svc_mummra_app's crontab===
