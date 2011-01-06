@@ -81,7 +81,7 @@ service httpd restart
 ===Switch to Mummra svc acct and checkout mummra trunk to ~===
 {{{
 su - svc_mummra_app
-svn co http://svn.apollogrp.edu/mummra/trunk ./mummra
+svn --no-auth-cache co http://svn.apollogrp.edu/mummra/trunk ./mummra
 }}}
 
 {{{
