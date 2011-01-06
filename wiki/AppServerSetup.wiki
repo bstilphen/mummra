@@ -1,5 +1,8 @@
+{{{
 yum install vim-enhanced ruby httpd httpd-devel gcc gcc-c++ readline readline-devel zlib zlib-devel openssl openssl-devel gettext-devel expat-devel curl-devel mysql-devel subversion
+}}}
 
+{{{
 mkdir /usr/local/src
 cd /usr/local/src
 wget ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p72.tar.gz
@@ -10,9 +13,12 @@ cd ../
 tar xzvf rubygems-1.4.1.tgz
 cd rubygems-1.4.1
 ruby setup.rb 
+}}}
 
+{{{
 gem install passenger --no-rdoc --no-ri
 passenger-install-apache2-module --auto
+}}}
 
 {{{
 cat << EOF >> /etc/httpd/conf/httpd.conf
@@ -39,18 +45,28 @@ cat << EOF > /etc/httpd/conf.d/mummra.conf
 EOF
 }}}
 
+{{{
 service httpd restart
+}}}
 
+{{{
 gem install -v=2.3.8 rails --no-rdoc --no-ri
 gem install mysql ruby-ldap --no-rdoc --no-ri
+}}}
 
+{{{
 mkdir -p /opt/www
 cd /opt/www
 svn --no-auth-cache co http://svn.apollogrp.edu/mummra/trunk/www/mummra ./mummra
 cd /opt/www/mummra && rake gems:install
 chown svc_mummra_app:unix_ServiceAccounts /opt/www/mummra/ -R
+}}}
 
+{{{
 su - svc_mummra_app
 svn co http://svn.apollogrp.edu/mummra/trunk ./mummra
+}}}
 
+{{{
 mkdir -p /opt/www/mummra/tmp && touch /opt/www/mummra/tmp/restart.txt
+}}}
