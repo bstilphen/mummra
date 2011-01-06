@@ -1,8 +1,13 @@
-
 Sample Output from guestinfo.pl
 
+{{{
 viperl/apps/vm/guestinfo.pl --vmname 16f3080d99 --operation display
+}}}
 
-
+{{{
 c56a591cfe guestState: notRunning
+}}}
+
+{{{
 16f3080d99 guestState: running
+}}}
