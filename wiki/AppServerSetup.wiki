@@ -1,5 +1,8 @@
 {{{
-yum install vim-enhanced ruby httpd httpd-devel gcc gcc-c++ readline readline-devel zlib zlib-devel openssl openssl-devel gettext-devel expat-devel curl-devel mysql-devel subversion
+yum install vim-enhanced ruby httpd httpd-devel \
+gcc gcc-c++ readline readline-devel zlib zlib-devel \
+openssl openssl-devel gettext-devel expat-devel \
+curl-devel mysql-devel subversion
 }}}
 
 {{{
