@@ -88,6 +88,10 @@ service httpd restart
 {{{
 su - svc_mummra_app
 svn --no-auth-cache co http://svn.apollogrp.edu/mummra/trunk ./mummra
+}}}
+
+===Create log directories===
+{{{
 mkdir -p ~/logs/{add_machines_to_helios,certify_machines,certify_requests,cron,provision}
 }}}
 
@@ -125,4 +129,3 @@ Hit space a few times and then just let the script complete.
 {{{
 cpan URI
 }}}
-
