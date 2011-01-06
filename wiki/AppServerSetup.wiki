@@ -112,7 +112,7 @@ crontab -e
 #
 # MUMMRA!!!!!!!!!
 #
-#  *  *  *  *  *  /home/lxrobot/mummra/bin/cron.sh
+#  *  *  *  *  *  ~/mummra/bin/cron.sh
 
 }}}
 
