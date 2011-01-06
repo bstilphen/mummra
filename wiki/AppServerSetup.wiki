@@ -14,14 +14,20 @@ ruby setup.rb
 gem install passenger --no-rdoc --no-ri
 passenger-install-apache2-module --auto
 
+{{{
 cat << EOF >> /etc/httpd/conf/httpd.conf
 LoadModule passenger_module /usr/local/lib/ruby/gems/1.8/gems/passenger-3.0.2/ext/apache2/mod_passenger.so
 PassengerRoot /usr/local/lib/ruby/gems/1.8/gems/passenger-3.0.2
 PassengerRuby /usr/local/bin/ruby
 EOF
+}}}
 
+{{{
 export IP_ADDRESS=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
+}}}
 
+
+{{{
 cat << EOF > /etc/httpd/conf.d/mummra.conf
 <VirtualHost $IP_ADDRESS:80>
         ServerName `hostname -f`
@@ -31,6 +37,7 @@ cat << EOF > /etc/httpd/conf.d/mummra.conf
         RailsEnv qa
 </VirtualHost>
 EOF
+}}}
 
 service httpd restart
 
