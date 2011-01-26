@@ -1,0 +1,160 @@
+= Introduction =
+
+Cheetara is a suite of open-source and custom software to aid in the automated deployment of applications.
+
+= Server Setup =
+
+Install EPEL repo:
+
+`rpm -Uvh http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm`
+
+== Rubies ==
+
+Install some deps and niceties:
+
+`yum -y install ruby-devel zlib-devel subversion vim-enhanced`
+
+
+Install git:
+
+`yum -y install git`
+
+
+Switch to cheetara user and install RVM:
+
+{{{
+su - svc_cheetara
+for i in {install,update}; do echo "$i: --no rdoc --no-ri" >> ~/.gemrc; done
+bash < <( curl http://rvm.beginrescueend.com/releases/rvm-install-head )
+echo "[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session." >> .bashrc
+source ~/.bashrc
+}}}
+
+Install ruby 1.8.7 and make it the default ruby:
+
+`rvm install ruby-1.8.7 && rvm --default 1.8.7`
+
+Create gemset:
+
+`rvm gemset create cheetara1 && rvm gemset use cheetara1`
+
+== Capistrano ==
+
+Install Capistrano deps:
+
+`rvm 1.8.7 gem install capistrano capistrano-ext`
+
+Checkout cheetara repo:
+
+`svn --no-auth-cache co http://svn.apollogrp.edu/cheetara/trunk ~./cheetara`
+
+
+== Hudson ==
+
+Install Hudson gem:
+
+`rvm 1.8.7 gem install hudson`
+
+Setup init.d script for hudson:
+
+As root, create the files start-hudson.sh and stop-hudson.sh
+
+/usr/local/bin/start-hudson.sh:
+{{{
+#!/bin/bash
+HUDSON_LOG=/u01/app/svc_cheetara/.hudson/hudson.log
+nohup nice hudson server --daemon --port 3001 > $HUDSON_LOG 2>&1
+}}}
+
+/usr/local/bin/stop-hudson.sh:
+{{{
+#!/bin/bash
+kill `ps -ef | grep hudson.war | grep -v grep | awk '{ print $2 }'`
+}}}
+
+`chmod +x /usr/local/bin/*hudson.sh`
+
+
+Create /etc/init.d/hudson:
+
+{{{
+#! /bin/bash
+#
+# hudson	Start/Stop the Hudson Continuous Integration server.
+#
+# chkconfig: 345 91 10
+# description: Hudson is a Continuous Integration server. \
+#              It monitors a source code repository and triggers builds \
+#              when it detects any changes. See https://hudson.dev.java.net/ \
+#              for more details.
+# processname: hudson
+# pidfile: /var/run/hudson.pid
+
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Get config.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "${NETWORKING}" = "no" ] && exit 0
+
+startup=/usr/local/bin/start-hudson.sh
+shutdown=/usr/local/bin/stop-hudson.sh
+HUDSON_USER=svc_cheetara
+
+start(){
+ echo -n $"Starting Hudson service: "
+ su - $HUDSON_USER -c $startup
+ RETVAL=$?
+ echo
+}
+
+stop(){
+ action $"Stopping Hudson service: " 
+ su - $HUDSON_USER -c $shutdown 
+ RETVAL=$?
+ echo
+}
+
+status(){
+ numproc=`ps -ef | grep hudson.war | grep -v "grep hudson.war" | wc -l`
+ if [ $numproc -gt 0 ]; then
+  echo "Hudson is running..."
+  else
+  echo "Hudson is stopped..."
+ fi
+}
+
+restart(){
+  stop
+  start
+}
+
+
+# See how we were called.
+case "$1" in
+start)
+ start
+ ;;
+stop)
+ stop
+ ;;
+status)
+ status
+ ;; 
+restart)
+ restart
+ ;;
+*)
+ echo $"Usage: $0 {start|stop|status|restart}"
+ exit 1
+esac
+
+exit 0
+}}}
+
+`chmod +x /etc/init.d/hudson && chkconfig --add hudson`
+
+
