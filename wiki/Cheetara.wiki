@@ -72,6 +72,8 @@ nohup nice hudson server --daemon --port 3001 > $HUDSON_LOG 2>&1
 kill `ps -ef | grep hudson.war | grep -v grep | awk '{ print $2 }'`
 }}}
 
+Chmod it:
+
 `chmod +x /usr/local/bin/*hudson.sh`
 
 
@@ -155,6 +157,6 @@ esac
 exit 0
 }}}
 
+Chmod and chkconfig it:
+
 `chmod +x /etc/init.d/hudson && chkconfig --add hudson`
-
-
