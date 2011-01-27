@@ -24,7 +24,7 @@ Switch to cheetara user and install RVM:
 
 {{{
 su - svc_cheetara
-for i in {install,update}; do echo "$i: --no rdoc --no-ri" >> ~/.gemrc; done
+for i in {install,update}; do echo "$i: --no-rdoc --no-ri" >> ~/.gemrc; done
 bash < <( curl http://rvm.beginrescueend.com/releases/rvm-install-head )
 echo "[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session." >> .bashrc
 source ~/.bashrc
