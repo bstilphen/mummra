@@ -1,0 +1,132 @@
+# Mummra App Server Setup #
+
+### Do all of this a the ROOT user ###
+
+```
+sudo su - root
+```
+
+### Enable cron for the Mummra service account ###
+```
+echo svc_mummra_app >> /etc/cron.allow
+```
+
+### Install some dependencies ###
+```
+yum -y install vim-enhanced ruby httpd httpd-devel \
+gcc gcc-c++ readline readline-devel zlib zlib-devel \
+openssl openssl-devel gettext-devel expat-devel \
+curl-devel mysql-devel subversion
+```
+
+
+### Download, compile, and install Ruby 1.8.7; Install rubygems ###
+```
+mkdir /usr/local/src
+cd /usr/local/src
+wget ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p72.tar.gz
+wget http://rubyforge.org/frs/download.php/73779/rubygems-1.4.1.tgz
+tar xzvf ruby-1.8.7-p72.tar.gz
+cd ruby-1.8.7-p72 && ./configure --enable-shared --enable-pthread && make && make install
+cd ../
+tar xzvf rubygems-1.4.1.tgz
+cd rubygems-1.4.1
+ruby setup.rb 
+```
+
+### Install Passenger (and its Apache mod) ###
+```
+gem install passenger --no-rdoc --no-ri
+passenger-install-apache2-module --auto
+```
+
+### Configure Apache for Passenger and mummra vhost ###
+```
+cat << EOF >> /etc/httpd/conf/httpd.conf
+LoadModule passenger_module /usr/local/lib/ruby/gems/1.8/gems/passenger-3.0.2/ext/apache2/mod_passenger.so
+PassengerRoot /usr/local/lib/ruby/gems/1.8/gems/passenger-3.0.2
+PassengerRuby /usr/local/bin/ruby
+EOF
+```
+
+Note: Update RailsEnv to the appropriate environment for the server you're building
+```
+export IP_ADDRESS=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
+
+cat << EOF > /etc/httpd/conf.d/mummra.conf
+<VirtualHost $IP_ADDRESS:80>
+        ServerName `hostname -f`
+        ServerAlias `hostname -s`
+        PassengerEnabled on
+        DocumentRoot /opt/www/mummra/public
+        RailsEnv qa
+</VirtualHost>
+EOF
+```
+
+### Setup mummra app dir; install rails and other gem deps ###
+```
+mkdir -p /opt/www
+cd /opt/www
+svn --no-auth-cache co http://svn.apollogrp.edu/mummra/trunk/www/mummra ./mummra
+gem install -v=2.3.8 rails --no-rdoc --no-ri
+cd /opt/www/mummra && rake gems:install
+chown svc_mummra_app:unix_ServiceAccounts /opt/www/mummra/ -R
+```
+
+### Install a few gems that rake gems:install misses ###
+```
+gem install mysql ruby-ldap --no-rdoc --no-ri
+```
+
+### Good idea to restart Apache now ###
+```
+service httpd restart
+```
+
+### Switch to Mummra svc acct and checkout mummra trunk to ~ ###
+```
+su - svc_mummra_app
+svn --no-auth-cache co http://svn.apollogrp.edu/mummra/trunk ./mummra
+cp ~/mummra/bin/dot_bash_profile.sh ~/.bash_profile
+```
+
+### Create log directories ###
+```
+mkdir -p ~/logs/{add_machines_to_helios,certify_machines,certify_requests,cron,provision}
+```
+
+### Setup svc\_mummra\_app's crontab ###
+```
+crontab -e
+
+# Use the hash sign to prefix a comment
+# +---------------- minute (0 - 59)
+# |  +------------- hour (0 - 23)
+# |  |  +---------- day of month (1 - 31)
+# |  |  |  +------- month (1 - 12)
+# |  |  |  |  +---- day of week (0 - 7) (Sunday=0 or 7)
+# |  |  |  |  |
+# *  *  *  *  *  command to be executed
+
+#
+# MUMMRA!!!!!!!!!
+#
+#  *  *  *  *  *  ~/mummra/bin/cron.sh
+
+```
+
+```
+mkdir -p /opt/www/mummra/tmp && touch /opt/www/mummra/tmp/restart.txt
+exit
+```
+
+## VMware Perl SDK installation ##
+As root:
+```
+yes | /nfs/nfs2/mummra/VMware-Perl-SDK/vmware-vsphere-cli-distrib/vmware-install.pl --default
+```
+Hit space a few times and then just let the script complete.
+```
+cpan URI
+```
